@@ -1,0 +1,152 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  fish: CollectionEntry<'fish'>[];
+}
+
+const { fish } = Astro.props;
+const previewFish = fish.slice(0, 4);
+---
+
+<section class="fish-preview" aria-labelledby="fish-preview-title">
+  <header class="fish-preview__header">
+    <p class="eyebrow">Observed collection</p>
+    <h2 id="fish-preview-title">Four records from the pond</h2>
+    <p>Fish are identified by visible markings while individual details remain unconfirmed.</p>
+  </header>
+
+  <div class="fish-preview__list">
+    {previewFish.map((record) => (
+      <article class="fish-preview__record">
+        <Image
+          src={record.data.image}
+          alt={record.data.imageAlt}
+          widths={[480, 720]}
+          sizes="(max-width: 700px) 100vw, 50vw"
+          loading="lazy"
+        />
+        <div class="fish-preview__details">
+          <h3>{record.data.label}</h3>
+          <dl>
+            <div>
+              <dt>Markings</dt>
+              <dd>{record.data.markings}</dd>
+            </div>
+            <div>
+              <dt>Record status</dt>
+              <dd>{record.data.recordStatus}</dd>
+            </div>
+          </dl>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .fish-preview {
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.65fr) minmax(0, 1.35fr);
+    gap: clamp(3rem, 7vw, 8rem);
+    padding: clamp(5rem, 10vw, 10rem) clamp(1.25rem, 5vw, 5rem);
+    background: var(--paper);
+    color: var(--concrete-900);
+  }
+
+  .fish-preview__header {
+    align-self: start;
+    position: sticky;
+    top: 2rem;
+  }
+
+  .fish-preview__header h2 {
+    max-width: 12ch;
+    margin-block-end: 2rem;
+    font-size: clamp(2.4rem, 5vw, 5.5rem);
+    line-height: 0.98;
+    letter-spacing: -0.045em;
+  }
+
+  .fish-preview__header > p:last-child {
+    max-width: 34rem;
+    color: var(--concrete-700);
+    line-height: 1.7;
+  }
+
+  .fish-preview__list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-block-start: 1px solid var(--line-paper);
+  }
+
+  .fish-preview__record {
+    min-width: 0;
+    padding: clamp(1rem, 2vw, 1.75rem);
+    border-inline-start: 1px solid var(--line-paper);
+    border-block-end: 1px solid var(--line-paper);
+  }
+
+  .fish-preview__record :global(img) {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    filter: saturate(0.78) contrast(1.03);
+  }
+
+  .fish-preview__details {
+    padding-block-start: 1.5rem;
+  }
+
+  h3 {
+    margin-block-end: 1.5rem;
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+  }
+
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  dl {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  dl > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block-start: 0.8rem;
+    border-block-start: 1px solid var(--line-paper);
+  }
+
+  dt,
+  dd {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  dt {
+    color: var(--concrete-700);
+  }
+
+  @media (max-width: 850px) {
+    .fish-preview {
+      grid-template-columns: 1fr;
+    }
+
+    .fish-preview__header {
+      position: static;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .fish-preview__list {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

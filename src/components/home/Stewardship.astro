@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import olegPortrait from '../../assets/people/oleg-engraved.png';
+---
+
+<section class="stewardship" aria-labelledby="stewardship-title">
+  <div class="stewardship__portrait" data-oleg-portrait>
+    <Image src={olegPortrait} alt="Engraved portrait of Oleg Mashtaler" />
+  </div>
+
+  <div class="stewardship__copy">
+    <p class="eyebrow">Pond stewardship</p>
+    <h2 id="stewardship-title">Oleg Mashtaler</h2>
+    <p>Oleg Mashtaler has worked with HBS Facilities since 2010. As a daytime operator, he maintains HVAC systems across campus and responds to equipment problems.</p>
+    <p>He also cares for the chapel's 17 koi. He helped improve the pond's filtration and water treatment, monitors pH, and feeds the fish, which swim over when he approaches.</p>
+    <a
+      class="stewardship__link"
+      href="https://www.hbs.edu/news/stories/oleg-mashtaler"
+      target="_blank"
+      rel="noreferrer"
+    >Read Oleg's HBS profile <span aria-hidden="true">↗</span></a>
+  </div>
+</section>
+
+<style>
+  .stewardship {
+    display: grid;
+    grid-template-columns: minmax(16rem, 1fr) minmax(18rem, 1fr);
+    align-items: center;
+    gap: clamp(3rem, 9vw, 10rem);
+    padding: clamp(5rem, 10vw, 10rem) clamp(1.25rem, 8vw, 9rem);
+    background: var(--pond-900);
+  }
+
+  .stewardship__portrait {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--paper);
+  }
+
+  .stewardship__portrait :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .stewardship__copy {
+    max-width: 42rem;
+  }
+
+  h2 {
+    margin-block-end: clamp(2rem, 5vw, 4rem);
+    font-size: clamp(3rem, 7vw, 7rem);
+    line-height: 0.92;
+    letter-spacing: -0.05em;
+  }
+
+  .stewardship__copy > p:not(.eyebrow) {
+    color: color-mix(in srgb, var(--paper) 82%, transparent);
+    font-size: clamp(1rem, 1.4vw, 1.2rem);
+    line-height: 1.75;
+  }
+
+  .stewardship__link {
+    display: inline-block;
+    margin-block-start: 1.5rem;
+    padding-block-end: 0.35rem;
+    border-block-end: 1px solid var(--koi);
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 750px) {
+    .stewardship {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

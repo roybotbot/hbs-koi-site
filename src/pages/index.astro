@@ -1,10 +1,26 @@
 ---
+import { getCollection } from 'astro:content';
+import FishPreview from '../components/home/FishPreview.astro';
+import HomeHero from '../components/home/HomeHero.astro';
+import Stewardship from '../components/home/Stewardship.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const fish = (await getCollection('fish')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <BaseLayout
   title="Chapel Koi Pond"
   description="An independent record of the koi living within the Class of 1959 Chapel pond."
 >
-  <h1>Chapel Koi Pond</h1>
+  <div class="home-page">
+    <HomeHero />
+    <FishPreview fish={fish} />
+    <Stewardship />
+  </div>
 </BaseLayout>
+
+<style is:global>
+  #main-content:has(.home-page) {
+    padding: 0;
+  }
+</style>
