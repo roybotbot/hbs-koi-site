@@ -9,4 +9,5 @@ test('homepage presents factual collection and stewardship', async ({ page }) =>
   await expect(page.getByRole('link', { name: /Read Oleg's HBS profile/i })).toHaveAttribute('href', 'https://www.hbs.edu/news/stories/oleg-mashtaler');
   await expect(page.locator('[data-oleg-portrait]')).toHaveCSS('aspect-ratio', '1 / 1');
   await expect(page.getByText('Specimen 01')).toBeVisible();
+  await expect(page.locator('[data-representative-notice]')).toHaveCount(4);
 });

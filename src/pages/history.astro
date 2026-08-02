@@ -4,12 +4,17 @@ import Timeline from '../components/history/Timeline.astro';
 import chapelLight from '../assets/chapel/chapel-light.jpg';
 import chapelPond from '../assets/chapel/chapel-pond.jpg';
 import { historyEvents } from '../data/history';
+import { imageCredits } from '../data/imageCredits';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const hbsHistoryUrl =
   'https://www.hbs.edu/about/campus-and-culture/campus-built-on-philanthropy/class-of-1959-chapel';
 const referenceArticleUrl = 'https://en.wikipedia.org/wiki/The_Class_of_1959_Chapel';
 const olegProfileUrl = 'https://www.hbs.edu/news/stories/oleg-mashtaler';
+const licenseUrls: Record<string, string> = {
+  'CC BY 1.0': 'https://creativecommons.org/licenses/by/1.0/',
+  'CC BY-SA 3.0': 'https://creativecommons.org/licenses/by-sa/3.0/',
+};
 ---
 
 <BaseLayout
@@ -59,13 +64,43 @@ const olegProfileUrl = 'https://www.hbs.edu/news/stories/oleg-mashtaler';
       </div>
     </section>
 
-    <footer class="history-sources" id="sources" aria-labelledby="sources-title">
-      <h2 id="sources-title">Sources</h2>
-      <ul>
-        <li><a href={hbsHistoryUrl}>HBS: MBA Class of 1959 Chapel</a></li>
-        <li><a href={referenceArticleUrl}>Wikipedia: The Class of 1959 Chapel</a></li>
-        <li><a href={olegProfileUrl}>HBS News: Oleg Mashtaler</a></li>
-      </ul>
+    <footer class="history-references" id="sources">
+      <section class="history-sources" aria-labelledby="sources-title">
+        <h2 id="sources-title">Editorial sources</h2>
+        <ul id="history-sources">
+          <li><a href={hbsHistoryUrl}>HBS: MBA Class of 1959 Chapel <span aria-hidden="true">↗</span></a></li>
+          <li><a href={referenceArticleUrl}>Wikipedia: The Class of 1959 Chapel <span aria-hidden="true">↗</span></a></li>
+          <li><a href={olegProfileUrl}>HBS News: Oleg Mashtaler <span aria-hidden="true">↗</span></a></li>
+        </ul>
+      </section>
+
+      <section class="image-credits" aria-labelledby="image-credits-title">
+        <h2 id="image-credits-title">Image credits</h2>
+        <ul>
+          {imageCredits.map((credit) => (
+            <li data-image-credit>
+              <strong>{credit.title}</strong>
+              <span>{credit.creator}</span>
+              {credit.sourceUrl.startsWith('http') ? (
+                <a href={credit.sourceUrl}>Source <span aria-hidden="true">↗</span></a>
+              ) : (
+                <span>Supplied locally</span>
+              )}
+              {licenseUrls[credit.license] ? (
+                <a href={licenseUrls[credit.license]}>{credit.license} <span aria-hidden="true">↗</span></a>
+              ) : (
+                <span>{credit.license}</span>
+              )}
+              <span>{credit.replacementStatus}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="accessibility-note" id="accessibility" aria-labelledby="accessibility-title">
+        <h2 id="accessibility-title">Accessibility</h2>
+        <p>Navigation is keyboard accessible. Reduced-motion, data-saver, low-memory, and unsupported WebGL environments retain a static pond image.</p>
+      </section>
     </footer>
   </div>
 </BaseLayout>
@@ -178,17 +213,31 @@ const olegProfileUrl = 'https://www.hbs.edu/news/stories/oleg-mashtaler';
     color: color-mix(in srgb, var(--paper) 76%, transparent);
   }
 
-  .history-sources {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 1rem clamp(2rem, 6vw, 6rem);
-    padding: 2rem clamp(1.25rem, 5vw, 5rem);
+  .history-references {
     border-block-start: 1px solid var(--line-paper);
     background: var(--paper);
     color: var(--concrete-700);
   }
 
-  .history-sources h2 {
+  .history-sources,
+  .image-credits,
+  .accessibility-note {
+    padding: 2rem clamp(1.25rem, 5vw, 5rem);
+  }
+
+  .history-sources,
+  .accessibility-note {
+    display: grid;
+    grid-template-columns: minmax(9rem, 0.25fr) 1fr;
+    gap: 1rem clamp(2rem, 6vw, 6rem);
+  }
+
+  .image-credits,
+  .accessibility-note {
+    border-block-start: 1px solid var(--line-paper);
+  }
+
+  .history-references h2 {
     margin: 0;
     color: var(--concrete-900);
     font-family: Inter, ui-sans-serif, system-ui, sans-serif;
@@ -198,10 +247,7 @@ const olegProfileUrl = 'https://www.hbs.edu/news/stories/oleg-mashtaler';
     text-transform: uppercase;
   }
 
-  .history-sources ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.65rem 1.5rem;
+  .history-references ul {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -209,7 +255,48 @@ const olegProfileUrl = 'https://www.hbs.edu/news/stories/oleg-mashtaler';
     line-height: 1.5;
   }
 
-  .history-sources a {
+  .history-sources ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1.5rem;
+  }
+
+  .image-credits > ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-block-start: 1.5rem;
+    border-block-start: 1px solid var(--line-paper);
+  }
+
+  .image-credits li {
+    display: grid;
+    grid-template-columns: minmax(9rem, 1fr) repeat(4, auto);
+    gap: 0.75rem;
+    padding-block: 0.85rem;
+    border-block-end: 1px solid var(--line-paper);
+  }
+
+  .image-credits li:nth-child(odd) {
+    padding-inline-end: 1rem;
+  }
+
+  .image-credits li:nth-child(even) {
+    padding-inline-start: 1rem;
+    border-inline-start: 1px solid var(--line-paper);
+  }
+
+  .image-credits strong {
+    color: var(--concrete-900);
+    font-weight: 600;
+  }
+
+  .accessibility-note p {
+    max-width: 48rem;
+    margin: 0;
+    line-height: 1.7;
+  }
+
+  .history-references a {
     text-underline-offset: 0.3em;
   }
 
@@ -223,8 +310,23 @@ const olegProfileUrl = 'https://www.hbs.edu/news/stories/oleg-mashtaler';
       position: static;
     }
 
-    .history-sources {
+    .history-sources,
+    .accessibility-note {
       grid-template-columns: 1fr;
+    }
+
+    .image-credits > ul {
+      grid-template-columns: 1fr;
+    }
+
+    .image-credits li {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .image-credits li:nth-child(odd),
+    .image-credits li:nth-child(even) {
+      padding-inline: 0;
+      border-inline-start: 0;
     }
   }
 </style>

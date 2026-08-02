@@ -16,29 +16,51 @@ import pondImage from '../../assets/chapel/chapel-pond.jpg';
 
 <script>
   const cleanups = new Map<HTMLElement, () => void>();
+  const pendingRoots = new WeakSet<HTMLElement>();
+  let mountGeneration = 0;
   let wakeModule: Promise<typeof import('../../lib/pond/createPondWake')> | undefined;
 
   async function mountPondWakes() {
+    const generation = mountGeneration;
     for (const root of document.querySelectorAll<HTMLElement>('[data-pond-wake]')) {
-      if (cleanups.has(root)) continue;
+      if (cleanups.has(root) || pendingRoots.has(root)) continue;
+      pendingRoots.add(root);
 
       const canvas = root.querySelector<HTMLCanvasElement>('[data-pond-canvas]');
       const sourceImage = root.querySelector<HTMLImageElement>('[data-pond-source]');
-      if (!canvas || !sourceImage) continue;
+      if (!canvas || !sourceImage) {
+        pendingRoots.delete(root);
+        continue;
+      }
 
       if (!sourceImage.complete) {
         await sourceImage.decode().catch(() => undefined);
       }
-      if (!sourceImage.naturalWidth) continue;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
+      if (generation !== mountGeneration || !root.isConnected) {
+        pendingRoots.delete(root);
+        continue;
+      }
+      if (!sourceImage.naturalWidth || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        pendingRoots.delete(root);
+        continue;
+      }
 
       wakeModule ??= import('../../lib/pond/createPondWake');
       const { createPondWake } = await wakeModule;
-      cleanups.set(root, createPondWake({ canvas, sourceImage }));
+      if (generation !== mountGeneration || !root.isConnected) {
+        pendingRoots.delete(root);
+        continue;
+      }
+
+      const cleanup = createPondWake({ canvas, sourceImage });
+      pendingRoots.delete(root);
+      if (generation !== mountGeneration || !root.isConnected) cleanup();
+      else cleanups.set(root, cleanup);
     }
   }
 
   function cleanupPondWakes() {
+    mountGeneration += 1;
     for (const cleanup of cleanups.values()) cleanup();
     cleanups.clear();
   }

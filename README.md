@@ -44,6 +44,7 @@ Cloudflare Pages settings:
 - Build command: `npm run build`
 - Output directory: `dist`
 - Node.js: 22.12 or newer
+- Environment variable: `SITE_URL` set to the deployed HTTPS origin, enabling canonical URLs
 
 No deployment is performed automatically by this repository.
 

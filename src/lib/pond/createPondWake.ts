@@ -18,6 +18,10 @@ interface PondWakeOptions {
 
 const noCleanup = () => undefined;
 
+function releaseContext(context: WebGL2RenderingContext): void {
+  context.getExtension('WEBGL_lose_context')?.loseContext();
+}
+
 export function createPondWake({ canvas, sourceImage }: PondWakeOptions): () => void {
   const matchedRoot = canvas.closest<HTMLElement>('[data-pond-wake]');
   if (!matchedRoot) return noCleanup;
@@ -38,15 +42,33 @@ export function createPondWake({ canvas, sourceImage }: PondWakeOptions): () => 
       typeof navigatorWithHints.deviceMemory === 'number' && navigatorWithHints.deviceMemory <= 4,
   };
 
-  if (!context || !shouldEnablePondWake(capabilities)) return noCleanup;
-
-  let simulation: FluidSimulation;
-  try {
-    simulation = new FluidSimulation(canvas, sourceImage, context);
-  } catch {
+  if (!context || !shouldEnablePondWake(capabilities)) {
+    if (context) releaseContext(context);
+    return noCleanup;
+  }
+  if (
+    !context.getExtension('EXT_color_buffer_float') ||
+    !context.getExtension('OES_texture_float_linear')
+  ) {
+    releaseContext(context);
     return noCleanup;
   }
 
+  let simulation: FluidSimulation | undefined;
+  try {
+    simulation = new FluidSimulation(canvas, sourceImage, context);
+    const bounds = root.getBoundingClientRect();
+    simulation.resize(bounds.width, bounds.height);
+    for (let attempt = 0; attempt < 8 && context.getError() !== context.NO_ERROR; attempt += 1) {
+      // Drain setup errors before the verified first frame.
+    }
+  } catch {
+    if (simulation) simulation.dispose();
+    else releaseContext(context);
+    return noCleanup;
+  }
+
+  const activeSimulation = simulation;
   let disposed = false;
   let visible = true;
   let animationFrame = 0;
@@ -55,8 +77,12 @@ export function createPondWake({ canvas, sourceImage }: PondWakeOptions): () => 
   let target: Vec2 = { ...body.position };
 
   const resize = () => {
-    const bounds = root.getBoundingClientRect();
-    simulation.resize(bounds.width, bounds.height);
+    try {
+      const bounds = root.getBoundingClientRect();
+      activeSimulation.resize(bounds.width, bounds.height);
+    } catch {
+      cleanup();
+    }
   };
 
   const frame = (time: number) => {
@@ -67,8 +93,9 @@ export function createPondWake({ canvas, sourceImage }: PondWakeOptions): () => 
     body = stepBody(body, target, deltaSeconds);
 
     try {
-      simulation.step({ body, deltaSeconds });
-      simulation.render();
+      activeSimulation.step({ body, deltaSeconds });
+      activeSimulation.render();
+      if (context.getError() !== context.NO_ERROR) throw new Error('Pond wake render failed');
       root.dataset.enhanced = 'true';
       animationFrame = requestAnimationFrame(frame);
     } catch {
@@ -115,14 +142,13 @@ export function createPondWake({ canvas, sourceImage }: PondWakeOptions): () => 
     intersectionObserver.disconnect();
     resizeObserver.disconnect();
     delete root.dataset.enhanced;
-    simulation.dispose();
+    activeSimulation.dispose();
   }
 
   root.addEventListener('pointermove', onPointerMove, { passive: true });
   root.addEventListener('pointerleave', onPointerLeave, { passive: true });
   resizeObserver.observe(root);
   intersectionObserver.observe(root);
-  resize();
   start();
 
   return cleanup;

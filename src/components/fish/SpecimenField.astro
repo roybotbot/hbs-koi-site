@@ -25,6 +25,7 @@ const total = String(count).padStart(2, '0');
   <div class="specimen-field__shade" aria-hidden="true"></div>
   <div class="specimen-field__content">
     <p class="specimen-field__position">{position} / {total}</p>
+    <p class="specimen-field__notice" data-representative-notice>Representative image · temporary</p>
     <div class="specimen-field__identity">
       <p class="eyebrow">Visible markings · {displayValue(record.data.markings)}</p>
       <h2 id={`${record.id}-title`}>{record.data.label}</h2>
@@ -82,11 +83,18 @@ const total = String(count).padStart(2, '0');
   }
 
   .specimen-field__position {
-    grid-column: 1 / -1;
     align-self: start;
     margin: 0;
     font-size: 0.72rem;
     letter-spacing: 0.18em;
+  }
+
+  .specimen-field__notice {
+    justify-self: end;
+    margin: 0;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   .specimen-field__identity {
@@ -117,6 +125,10 @@ const total = String(count).padStart(2, '0');
     .specimen-field__content {
       grid-template-columns: 1fr;
       grid-template-rows: auto 1fr auto;
+    }
+
+    .specimen-field__notice {
+      justify-self: start;
     }
 
     a {

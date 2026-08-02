@@ -12,7 +12,7 @@ interface Props {
 
 const { title, description, theme = 'dark' } = Astro.props;
 const documentTitle = title === 'Chapel Koi Pond' ? title : `${title} | Chapel Koi Pond`;
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin);
+const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined;
 ---
 
 <!doctype html>
@@ -21,7 +21,7 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonicalUrl} />
+    {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
     <title>{documentTitle}</title>
     <ClientRouter />
   </head>

@@ -182,7 +182,9 @@ export class FluidSimulation {
     this.simulationHeight = Math.max(1, Math.floor(safeHeight * scale));
     for (const target of this.targets()) {
       target.setSize(this.simulationWidth, this.simulationHeight);
+      this.assertFramebufferComplete(target);
     }
+    this.renderer.setRenderTarget(null);
 
     const texel = new Vector2(1 / this.simulationWidth, 1 / this.simulationHeight);
     for (const pass of this.materials.slice(0, 6)) {
@@ -218,6 +220,14 @@ export class FluidSimulation {
     this.quad.material = material;
     this.renderer.setRenderTarget(target);
     this.renderer.render(this.scene, this.camera);
+  }
+
+  private assertFramebufferComplete(target: WebGLRenderTarget): void {
+    this.renderer.setRenderTarget(target);
+    const context = this.renderer.getContext();
+    if (context.checkFramebufferStatus(context.FRAMEBUFFER) !== context.FRAMEBUFFER_COMPLETE) {
+      throw new Error('Pond wake framebuffer is incomplete');
+    }
   }
 
   private targets(): WebGLRenderTarget[] {

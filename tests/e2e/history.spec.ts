@@ -27,7 +27,7 @@ test('history uses sourced vertical chronology', async ({ page }) => {
   );
   expect(finalConnectorDisplay).toBe('none');
 
-  const sourceLinks = page.locator('#sources a');
+  const sourceLinks = page.locator('#history-sources a');
   await expect(sourceLinks).toHaveCount(3);
   await expect(sourceLinks.nth(0)).toHaveAttribute(
     'href',
@@ -41,4 +41,11 @@ test('history uses sourced vertical chronology', async ({ page }) => {
     'href',
     'https://www.hbs.edu/news/stories/oleg-mashtaler',
   );
+
+  const imageCredits = page.locator('[data-image-credit]');
+  await expect(imageCredits).toHaveCount(7);
+  await expect(page.getByText('Magnus Manske', { exact: true })).toBeVisible();
+  await expect(page.getByText('Paulman', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(/Dsmack/).first()).toBeVisible();
+  await expect(page.getByText('Accessibility', { exact: true }).last()).toBeVisible();
 });

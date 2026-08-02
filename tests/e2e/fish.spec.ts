@@ -6,6 +6,7 @@ test('collection shows one factual specimen field at a time', async ({ page }) =
   await expect(page.getByRole('heading', { name: 'Specimen 01' })).toBeVisible();
   await expect(page.getByText('01 / 04')).toBeVisible();
   await expect(page.locator('[data-specimen-field]')).toHaveCount(4);
+  await expect(page.locator('[data-representative-notice]')).toHaveCount(4);
 });
 
 test('record keeps unknown facts explicit', async ({ page }) => {

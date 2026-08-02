@@ -20,13 +20,16 @@ const previewFish = fish.slice(0, 4);
   <div class="fish-preview__list">
     {previewFish.map((record) => (
       <article class="fish-preview__record">
-        <Image
-          src={record.data.image}
-          alt={record.data.imageAlt}
-          widths={[480, 720]}
-          sizes="(max-width: 700px) 100vw, 50vw"
-          loading="lazy"
-        />
+        <figure>
+          <Image
+            src={record.data.image}
+            alt={record.data.imageAlt}
+            widths={[480, 720]}
+            sizes="(max-width: 700px) 100vw, 50vw"
+            loading="lazy"
+          />
+          <figcaption data-representative-notice>Representative image · temporary</figcaption>
+        </figure>
         <div class="fish-preview__details">
           <h3>{record.data.label}</h3>
           <dl>
@@ -92,12 +95,29 @@ const previewFish = fish.slice(0, 4);
     border-block-end: 1px solid var(--line-paper);
   }
 
+  .fish-preview__record figure {
+    position: relative;
+    margin: 0;
+  }
+
   .fish-preview__record :global(img) {
     display: block;
     width: 100%;
     aspect-ratio: 4 / 3;
     object-fit: cover;
     filter: saturate(0.78) contrast(1.03);
+  }
+
+  .fish-preview__record figcaption {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    padding: 0.45rem 0.6rem;
+    background: rgb(24 48 38 / 88%);
+    color: var(--paper);
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
   }
 
   .fish-preview__details {
