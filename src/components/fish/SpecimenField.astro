@@ -31,7 +31,11 @@ const total = String(count).padStart(2, '0');
       <p class="eyebrow">Visible markings · {displayValue(record.data.markings)}</p>
       <h2 id={`${record.id}-title`}>{record.data.label}</h2>
     </div>
-    <a href={withBasePath(`/fish/${record.id}`)}>Open specimen record</a>
+    <a
+      class="specimen-field__link"
+      href={withBasePath(`/fish/${record.id}`)}
+      aria-label={`Open ${record.data.label} record`}
+    >Open specimen record</a>
   </div>
 </section>
 
@@ -114,12 +118,28 @@ const total = String(count).padStart(2, '0');
     letter-spacing: -0.055em;
   }
 
-  a {
+  .specimen-field__link {
     padding-block: 0.65rem;
     font-size: 0.72rem;
     letter-spacing: 0.12em;
     text-underline-offset: 0.5em;
     text-transform: uppercase;
+  }
+
+  .specimen-field__link::after {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    content: '';
+  }
+
+  .specimen-field__link:focus-visible {
+    outline: none;
+  }
+
+  .specimen-field__link:focus-visible::after {
+    outline: 3px solid var(--koi);
+    outline-offset: -4px;
   }
 
   @media (max-width: 650px) {
@@ -132,7 +152,7 @@ const total = String(count).padStart(2, '0');
       justify-self: start;
     }
 
-    a {
+    .specimen-field__link {
       justify-self: start;
     }
   }
