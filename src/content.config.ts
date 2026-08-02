@@ -13,7 +13,7 @@ const fish = defineCollection({
     recordStatus: z.enum(['incomplete', 'verified']),
     image: image(),
     imageAlt: z.string(),
-    sourceUrl: z.string().url(),
+    sourceUrl: z.url(),
     license: z.string(),
     replacementStatus: z.enum(['temporary', 'final']),
   }),
