@@ -13,19 +13,67 @@ interface Props {
 const { title, description, theme = 'dark' } = Astro.props;
 const documentTitle = title === 'Chapel Koi Pond' ? title : `${title} | Chapel Koi Pond`;
 const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site) : undefined;
+const siteGatePassword = process.env.SITE_GATE_PASSWORD ?? '';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-site-access={siteGatePassword ? 'locked' : 'granted'}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+    {siteGatePassword && <meta name="robots" content="noindex, nofollow" />}
     <title>{documentTitle}</title>
+    <script is:inline data-astro-rerun define:vars={{ siteGatePassword }}>
+      (() => {
+        const accessKey = 'chapel-koi-site-access';
+        const root = document.documentElement;
+        const url = new URL(window.location.href);
+        const suppliedPassword = url.searchParams.get('pass');
+        let granted = !siteGatePassword;
+
+        try {
+          if (siteGatePassword && suppliedPassword === siteGatePassword) {
+            sessionStorage.setItem(accessKey, 'granted');
+          }
+          granted = !siteGatePassword || sessionStorage.getItem(accessKey) === 'granted';
+        } catch {
+          granted = !siteGatePassword;
+        }
+
+        if (siteGatePassword && suppliedPassword !== null && suppliedPassword !== siteGatePassword) {
+          root.dataset.siteAccessError = 'true';
+        } else {
+          delete root.dataset.siteAccessError;
+        }
+
+        if (suppliedPassword !== null) {
+          url.searchParams.delete('pass');
+          const query = url.searchParams.toString();
+          history.replaceState(history.state, '', `${url.pathname}${query ? `?${query}` : ''}${url.hash}`);
+        }
+
+        const applyAccessState = () => {
+          root.dataset.siteAccess = granted ? 'granted' : 'locked';
+        };
+        applyAccessState();
+        document.addEventListener('astro:after-swap', applyAccessState, { once: true });
+      })();
+    </script>
     <ClientRouter />
   </head>
   <body data-theme={theme}>
+    <section class="site-gate" aria-labelledby="site-gate-title" aria-label="Private preview">
+      <form method="get" data-astro-reload>
+        <p class="eyebrow">Private preview</p>
+        <h1 id="site-gate-title">Chapel Koi Pond</h1>
+        <label for="site-password">Password</label>
+        <input id="site-password" name="pass" type="password" autocomplete="current-password" required />
+        <p class="site-gate__error" role="alert">Incorrect password.</p>
+        <button type="submit">View site</button>
+      </form>
+    </section>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <SiteNav />
     <main id="main-content" data-page-ready="false">

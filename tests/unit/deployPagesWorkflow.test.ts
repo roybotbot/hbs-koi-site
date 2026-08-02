@@ -13,5 +13,7 @@ describe('GitHub Pages workflow', () => {
     expect(workflow).toContain('path: dist');
     expect(workflow).toContain('SITE_URL: ${{ steps.pages.outputs.origin }}');
     expect(workflow).toContain('BASE_PATH: ${{ steps.pages.outputs.base_path }}');
+    expect(workflow).toContain('SITE_GATE_PASSWORD: ${{ secrets.SITE_GATE_PASSWORD }}');
+    expect(workflow).toContain('tests/e2e/gate.spec.ts');
   });
 });

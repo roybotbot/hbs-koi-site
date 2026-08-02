@@ -45,7 +45,13 @@ GitHub Pages deploys automatically after every successful push to `main`. In the
 
 The workflow in `.github/workflows/deploy-pages.yml` checks and tests the source, builds the project with the Pages base path, and uploads the generated `dist/` directory. Generated output is not committed to a `gh-pages` branch.
 
-Expected site URL: <https://roybotbot.github.io/chapel-koi-site/>
+Expected site URL: <https://chapelkoi.com/>
+
+### Cosmetic preview gate
+
+The deployed site requires the `SITE_GATE_PASSWORD` GitHub Actions repository secret. A visitor can enter the password in the single-field gate or open `https://chapelkoi.com/?pass=<password>`. Access lasts for the current browser tab, and the query parameter is removed after it is checked.
+
+This is only a casual deterrent. The password is embedded in the generated static HTML, and direct source or asset access remains public. The workflow refuses to deploy when the secret is missing. Local development is ungated unless `SITE_GATE_PASSWORD` is set in the environment.
 
 ### Cloudflare Pages alternative
 
@@ -53,6 +59,7 @@ Expected site URL: <https://roybotbot.github.io/chapel-koi-site/>
 - Output directory: `dist`
 - Node.js: 22.12 or newer
 - Environment variable: `SITE_URL` set to the deployed HTTPS origin, enabling canonical URLs
+- Environment variable: `SITE_GATE_PASSWORD` set at build time when the cosmetic gate is required
 
 ## Attribution
 

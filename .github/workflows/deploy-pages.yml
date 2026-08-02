@@ -24,15 +24,24 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Require site gate password
+        env:
+          SITE_GATE_PASSWORD: ${{ secrets.SITE_GATE_PASSWORD }}
+        run: test -n "$SITE_GATE_PASSWORD"
       - run: npx playwright install --with-deps chromium
       - run: npm run check
       - run: npm test
+      - name: Test site gate
+        env:
+          SITE_GATE_PASSWORD: ${{ secrets.SITE_GATE_PASSWORD }}
+        run: npx playwright test tests/e2e/gate.spec.ts
       - uses: actions/configure-pages@v5
         id: pages
       - run: npm run build
         env:
           SITE_URL: ${{ steps.pages.outputs.origin }}
           BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          SITE_GATE_PASSWORD: ${{ secrets.SITE_GATE_PASSWORD }}
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
