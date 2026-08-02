@@ -11,3 +11,11 @@ test('homepage presents factual collection and stewardship', async ({ page }) =>
   await expect(page.getByText('Specimen 01')).toBeVisible();
   await expect(page.locator('[data-representative-notice]')).toHaveCount(4);
 });
+
+test('fish preview card opens its specimen record from the image', async ({ page }) => {
+  await page.goto('/');
+  const firstCard = page.locator('.fish-preview__record').first();
+  await expect(firstCard.getByRole('link', { name: 'View Specimen 01 record' })).toBeVisible();
+  await firstCard.getByRole('img').click();
+  await expect(page).toHaveURL(/\/fish\/specimen-01\/?$/);
+});

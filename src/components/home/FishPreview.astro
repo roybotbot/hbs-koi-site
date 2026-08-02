@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import { withBasePath } from '../../lib/content/withBasePath';
 
 interface Props {
   fish: CollectionEntry<'fish'>[];
@@ -20,29 +21,36 @@ const previewFish = fish.slice(0, 4);
   <div class="fish-preview__list">
     {previewFish.map((record) => (
       <article class="fish-preview__record">
-        <figure>
-          <Image
-            src={record.data.image}
-            alt={record.data.imageAlt}
-            widths={[480, 720]}
-            sizes="(max-width: 700px) 100vw, 50vw"
-            loading="lazy"
-          />
-          <figcaption data-representative-notice>Representative image · temporary</figcaption>
-        </figure>
-        <div class="fish-preview__details">
-          <h3>{record.data.label}</h3>
-          <dl>
-            <div>
-              <dt>Markings</dt>
-              <dd>{record.data.markings}</dd>
-            </div>
-            <div>
-              <dt>Record status</dt>
-              <dd>{record.data.recordStatus}</dd>
-            </div>
-          </dl>
-        </div>
+        <a
+          class="fish-preview__link"
+          href={withBasePath(`/fish/${record.id}`)}
+          aria-label={`View ${record.data.label} record`}
+        >
+          <figure>
+            <Image
+              src={record.data.image}
+              alt={record.data.imageAlt}
+              widths={[480, 720]}
+              sizes="(max-width: 700px) 100vw, 50vw"
+              loading="lazy"
+            />
+            <figcaption data-representative-notice>Representative image · temporary</figcaption>
+          </figure>
+          <div class="fish-preview__details">
+            <h3>{record.data.label}</h3>
+            <dl>
+              <div>
+                <dt>Markings</dt>
+                <dd>{record.data.markings}</dd>
+              </div>
+              <div>
+                <dt>Record status</dt>
+                <dd>{record.data.recordStatus}</dd>
+              </div>
+            </dl>
+            <span class="fish-preview__action" aria-hidden="true">View record ↗</span>
+          </div>
+        </a>
       </article>
     ))}
   </div>
@@ -90,9 +98,21 @@ const previewFish = fish.slice(0, 4);
 
   .fish-preview__record {
     min-width: 0;
-    padding: clamp(1rem, 2vw, 1.75rem);
     border-inline-start: 1px solid var(--line-paper);
     border-block-end: 1px solid var(--line-paper);
+  }
+
+  .fish-preview__link {
+    display: block;
+    height: 100%;
+    padding: clamp(1rem, 2vw, 1.75rem);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .fish-preview__link:focus-visible {
+    outline: 3px solid var(--koi);
+    outline-offset: -3px;
   }
 
   .fish-preview__record figure {
@@ -122,6 +142,16 @@ const previewFish = fish.slice(0, 4);
 
   .fish-preview__details {
     padding-block-start: 1.5rem;
+  }
+
+  .fish-preview__action {
+    display: inline-block;
+    margin-block-start: 1.5rem;
+    color: var(--concrete-900);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
   }
 
   h3 {
