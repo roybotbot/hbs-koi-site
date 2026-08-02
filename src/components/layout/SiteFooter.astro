@@ -1,3 +1,7 @@
+---
+import { withBasePath } from '../../lib/content/withBasePath';
+---
+
 <footer class="site-footer">
   <div>
     <strong>Chapel Koi Pond</strong>
@@ -5,7 +9,7 @@
     <p>Not affiliated with or endorsed by Harvard University.</p>
   </div>
   <div>
-    <p><a href="/history#sources">Image credits</a> · <a href="/history#accessibility">Accessibility</a></p>
+    <p><a href={withBasePath('/history#sources')}>Image credits</a> · <a href={withBasePath('/history#accessibility')}>Accessibility</a></p>
     <p>A project by <a href="https://natian.io" rel="author">Roy Natian <span aria-hidden="true">↗</span></a>.</p>
   </div>
 </footer>

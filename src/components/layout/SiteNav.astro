@@ -1,8 +1,12 @@
+---
+import { withBasePath } from '../../lib/content/withBasePath';
+---
+
 <header class="site-nav">
-  <a class="site-title" href="/">Chapel Koi Pond</a>
+  <a class="site-title" href={withBasePath('/')}>Chapel Koi Pond</a>
   <span class="site-location">Allston · Massachusetts</span>
   <nav aria-label="Primary">
-    <a href="/fish">Fish</a>
-    <a href="/history">History</a>
+    <a href={withBasePath('/fish')}>Fish</a>
+    <a href={withBasePath('/history')}>History</a>
   </nav>
 </header>

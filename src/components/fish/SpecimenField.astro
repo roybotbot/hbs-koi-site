@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { displayValue } from '../../lib/content/displayValue';
+import { withBasePath } from '../../lib/content/withBasePath';
 
 interface Props {
   record: CollectionEntry<'fish'>;
@@ -30,7 +31,7 @@ const total = String(count).padStart(2, '0');
       <p class="eyebrow">Visible markings · {displayValue(record.data.markings)}</p>
       <h2 id={`${record.id}-title`}>{record.data.label}</h2>
     </div>
-    <a href={`/fish/${record.id}`}>Open specimen record</a>
+    <a href={withBasePath(`/fish/${record.id}`)}>Open specimen record</a>
   </div>
 </section>
 
