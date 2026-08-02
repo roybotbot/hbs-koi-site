@@ -59,14 +59,19 @@ import pondImage from '../../assets/chapel/chapel-pond.jpg';
     }
   }
 
-  function cleanupPondWakes() {
+  function invalidatePendingPondWakes() {
     mountGeneration += 1;
+  }
+
+  function cleanupPondWakes() {
+    invalidatePendingPondWakes();
     for (const cleanup of cleanups.values()) cleanup();
     cleanups.clear();
   }
 
   void mountPondWakes();
   document.addEventListener('astro:page-load', mountPondWakes);
+  document.addEventListener('astro:before-preparation', invalidatePendingPondWakes);
   document.addEventListener('astro:before-swap', cleanupPondWakes);
 </script>
 
