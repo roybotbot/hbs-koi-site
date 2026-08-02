@@ -1,0 +1,58 @@
+---
+import { getCollection } from 'astro:content';
+import SpecimenField from '../../components/fish/SpecimenField.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const fish = (await getCollection('fish')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout
+  title="Observed fish"
+  description="Observed fish records from the Class of 1959 Chapel pond, using neutral identifiers and confirmed visible markings."
+>
+  <div class="fish-collection">
+    <header class="fish-collection__header">
+      <p class="eyebrow">Pond collection</p>
+      <h1>Observed fish</h1>
+      <p>Fish are identified by visible markings while individual details remain unconfirmed.</p>
+    </header>
+
+    {fish.map((record, index) => (
+      <SpecimenField record={record} index={index} count={fish.length} />
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .fish-collection__header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(16rem, 0.6fr);
+    align-items: end;
+    gap: 2rem;
+    padding: clamp(4rem, 9vw, 9rem) clamp(1.25rem, 5vw, 5rem);
+    background: var(--concrete-900);
+  }
+
+  .fish-collection__header .eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .fish-collection__header > p:last-child {
+    max-width: 34rem;
+    margin: 0;
+    color: color-mix(in srgb, var(--paper) 72%, transparent);
+    line-height: 1.7;
+  }
+
+  @media (max-width: 700px) {
+    .fish-collection__header {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<style is:global>
+  #main-content:has(.fish-collection) {
+    padding: 0;
+  }
+</style>

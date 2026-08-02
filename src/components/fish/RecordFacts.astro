@@ -1,0 +1,91 @@
+---
+import { displayValue } from '../../lib/content/displayValue';
+
+interface Props {
+  variety: string | null;
+  age: string | null;
+  markings: string;
+}
+
+const { variety, age, markings } = Astro.props;
+---
+
+<section class="record-facts" aria-labelledby="record-facts-title">
+  <h2 id="record-facts-title">Recorded facts</h2>
+  <dl>
+    <div>
+      <dt>Variety</dt>
+      <dd>{displayValue(variety, 'Unconfirmed')}</dd>
+    </div>
+    <div>
+      <dt>Age</dt>
+      <dd>{displayValue(age)}</dd>
+    </div>
+    <div>
+      <dt>Visible markings</dt>
+      <dd>{displayValue(markings)}</dd>
+    </div>
+  </dl>
+</section>
+
+<style>
+  .record-facts {
+    padding: clamp(3rem, 7vw, 7rem) clamp(1.25rem, 5vw, 5rem);
+    border-block-start: 1px solid var(--line-paper);
+    background: color-mix(in srgb, var(--paper) 91%, white);
+    color: var(--concrete-900);
+  }
+
+  h2 {
+    margin-block-end: clamp(2rem, 5vw, 4rem);
+    font-size: clamp(2rem, 4vw, 4rem);
+    line-height: 1;
+  }
+
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  dl {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-block: 1px solid var(--line-paper);
+  }
+
+  dl > div {
+    min-width: 0;
+    padding: 1.5rem clamp(1rem, 2.5vw, 2.5rem) 1.75rem 0;
+  }
+
+  dl > div + div {
+    padding-inline-start: clamp(1rem, 2.5vw, 2.5rem);
+    border-inline-start: 1px solid var(--line-paper);
+  }
+
+  dt {
+    margin-block-end: 0.7rem;
+    color: var(--concrete-700);
+    font-size: 0.68rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.35rem, 2.5vw, 2.25rem);
+    line-height: 1.2;
+  }
+
+  @media (max-width: 650px) {
+    dl {
+      grid-template-columns: 1fr;
+    }
+
+    dl > div + div {
+      padding-inline-start: 0;
+      border-block-start: 1px solid var(--line-paper);
+      border-inline-start: 0;
+    }
+  }
+</style>

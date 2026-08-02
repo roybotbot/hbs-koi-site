@@ -1,0 +1,234 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { getCollection, render } from 'astro:content';
+import RecordFacts from '../../components/fish/RecordFacts.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const fish = await getCollection('fish');
+  return fish.map((record) => ({ params: { id: record.id }, props: { record } }));
+}
+
+interface Props {
+  record: CollectionEntry<'fish'>;
+}
+
+const { record } = Astro.props;
+const { Content } = await render(record);
+---
+
+<BaseLayout
+  title={record.data.label}
+  description={`${record.data.label}, identified by ${record.data.markings.toLowerCase()} visible markings in the Chapel Koi Pond collection.`}
+>
+  <article class="fish-record">
+    <header class="fish-record__portrait">
+      <Image
+        src={record.data.image}
+        alt={record.data.imageAlt}
+        widths={[640, 960, 1440, 1920]}
+        sizes="100vw"
+        loading="eager"
+      />
+      <div class="fish-record__portrait-shade" aria-hidden="true"></div>
+      <div class="fish-record__title">
+        <p class="eyebrow">Pond specimen record</p>
+        <h1>{record.data.label}</h1>
+      </div>
+    </header>
+
+    <div class="fish-record__seam" aria-hidden="true"></div>
+
+    <section class="fish-record__identification" aria-labelledby="identification-title">
+      <div>
+        <p class="eyebrow">Identification</p>
+        <h2 id="identification-title">Observed markings</h2>
+      </div>
+      <div class="fish-record__identification-copy">
+        <p class="fish-record__markings">{record.data.markings}</p>
+        <Content />
+        <dl>
+          <div>
+            <dt>Image status</dt>
+            <dd>{record.data.replacementStatus}</dd>
+          </div>
+          <div>
+            <dt>Image source</dt>
+            <dd><a href={record.data.sourceUrl}>Wikimedia Commons</a> · {record.data.license}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <RecordFacts
+      variety={record.data.variety}
+      age={record.data.age}
+      markings={record.data.markings}
+    />
+
+    <section class="fish-record__policy" aria-labelledby="record-policy-title">
+      <div>
+        <p class="eyebrow">Record policy</p>
+        <h2 id="record-policy-title">Only confirmed observations</h2>
+      </div>
+      <div>
+        <p>Behavior, location, and health information appear only after observation or confirmation by the caretaker.</p>
+        <p class="fish-record__status">Record status · {record.data.recordStatus}</p>
+      </div>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .fish-record__portrait {
+    position: relative;
+    display: grid;
+    min-height: min(82svh, 64rem);
+    overflow: hidden;
+    background: var(--pond-900);
+    isolation: isolate;
+  }
+
+  .fish-record__portrait > :global(picture),
+  .fish-record__portrait > :global(img) {
+    position: absolute;
+    z-index: -2;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .fish-record__portrait :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.72) contrast(1.08) brightness(0.64);
+  }
+
+  .fish-record__portrait-shade {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgb(24 48 38 / 86%), transparent 70%),
+      linear-gradient(0deg, rgb(18 29 25 / 68%), transparent 60%);
+  }
+
+  .fish-record__title {
+    align-self: end;
+    padding: clamp(3rem, 7vw, 7rem) clamp(1.25rem, 5vw, 5rem);
+  }
+
+  .fish-record__seam {
+    height: 5px;
+    background: var(--koi);
+  }
+
+  .fish-record__identification,
+  .fish-record__policy {
+    display: grid;
+    grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 1.3fr);
+    gap: clamp(3rem, 8vw, 9rem);
+    padding: clamp(4rem, 9vw, 9rem) clamp(1.25rem, 5vw, 5rem);
+  }
+
+  .fish-record__identification {
+    background: var(--paper);
+    color: var(--concrete-900);
+  }
+
+  h2 {
+    max-width: 10ch;
+    margin: 0;
+    font-size: clamp(2.5rem, 5vw, 5rem);
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+  }
+
+  .fish-record__markings {
+    margin-block-end: 2rem;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(2rem, 4vw, 4rem);
+    line-height: 1;
+  }
+
+  .fish-record__identification-copy :global(p):not(.fish-record__markings) {
+    max-width: 42rem;
+    color: var(--concrete-700);
+    line-height: 1.7;
+  }
+
+  dl,
+  dd {
+    margin: 0;
+  }
+
+  dl {
+    margin-block-start: 3rem;
+    border-block-start: 1px solid var(--line-paper);
+  }
+
+  dl > div {
+    display: grid;
+    grid-template-columns: minmax(7rem, 0.35fr) minmax(0, 1fr);
+    gap: 1rem;
+    padding-block: 1rem;
+    border-block-end: 1px solid var(--line-paper);
+  }
+
+  dt,
+  dd {
+    font-size: 0.7rem;
+    letter-spacing: 0.09em;
+    line-height: 1.6;
+    text-transform: uppercase;
+  }
+
+  dt {
+    color: var(--concrete-700);
+  }
+
+  dd {
+    overflow-wrap: anywhere;
+  }
+
+  .fish-record__policy {
+    background: var(--pond-900);
+    color: var(--paper);
+  }
+
+  .fish-record__policy > div:last-child {
+    align-self: end;
+    max-width: 43rem;
+  }
+
+  .fish-record__policy > div:last-child > p:first-child {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(1.5rem, 3vw, 2.75rem);
+    line-height: 1.35;
+  }
+
+  .fish-record__status {
+    margin-block: 3rem 0;
+    padding-block-start: 1rem;
+    border-block-start: 1px solid var(--line-dark);
+    color: color-mix(in srgb, var(--paper) 66%, transparent);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 750px) {
+    .fish-record__identification,
+    .fish-record__policy {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<style is:global>
+  #main-content:has(.fish-record) {
+    padding: 0;
+  }
+</style>
