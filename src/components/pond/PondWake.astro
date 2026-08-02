@@ -4,9 +4,49 @@ import pondImage from '../../assets/chapel/chapel-pond.jpg';
 ---
 
 <div class="pond-wake" data-pond-wake>
-  <Image class="pond-wake__fallback" src={pondImage} alt="" aria-hidden="true" />
+  <Image
+    class="pond-wake__fallback"
+    src={pondImage}
+    alt=""
+    aria-hidden="true"
+    data-pond-source
+  />
   <canvas data-pond-canvas aria-hidden="true"></canvas>
 </div>
+
+<script>
+  const cleanups = new Map<HTMLElement, () => void>();
+  let wakeModule: Promise<typeof import('../../lib/pond/createPondWake')> | undefined;
+
+  async function mountPondWakes() {
+    for (const root of document.querySelectorAll<HTMLElement>('[data-pond-wake]')) {
+      if (cleanups.has(root)) continue;
+
+      const canvas = root.querySelector<HTMLCanvasElement>('[data-pond-canvas]');
+      const sourceImage = root.querySelector<HTMLImageElement>('[data-pond-source]');
+      if (!canvas || !sourceImage) continue;
+
+      if (!sourceImage.complete) {
+        await sourceImage.decode().catch(() => undefined);
+      }
+      if (!sourceImage.naturalWidth) continue;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) continue;
+
+      wakeModule ??= import('../../lib/pond/createPondWake');
+      const { createPondWake } = await wakeModule;
+      cleanups.set(root, createPondWake({ canvas, sourceImage }));
+    }
+  }
+
+  function cleanupPondWakes() {
+    for (const cleanup of cleanups.values()) cleanup();
+    cleanups.clear();
+  }
+
+  void mountPondWakes();
+  document.addEventListener('astro:page-load', mountPondWakes);
+  document.addEventListener('astro:before-swap', cleanupPondWakes);
+</script>
 
 <style>
   .pond-wake {
@@ -31,7 +71,8 @@ import pondImage from '../../assets/chapel/chapel-pond.jpg';
   }
 
   canvas {
-    display: none;
+    pointer-events: none;
+    opacity: 0;
   }
 
   .pond-wake[data-enhanced='true'] .pond-wake__fallback {
@@ -39,6 +80,6 @@ import pondImage from '../../assets/chapel/chapel-pond.jpg';
   }
 
   .pond-wake[data-enhanced='true'] canvas {
-    display: block;
+    opacity: 1;
   }
 </style>
