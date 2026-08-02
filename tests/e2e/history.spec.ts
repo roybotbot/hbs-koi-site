@@ -22,7 +22,23 @@ test('history uses sourced vertical chronology', async ({ page }) => {
     await expect(page.getByText(body, { exact: true })).toBeVisible();
   }
 
-  await expect(page.getByRole('link', { name: /HBS history/i })).toHaveAttribute('href', /hbs\.edu/);
-  await expect(page.getByRole('link', { name: /Reference article/i })).toHaveAttribute('href', /wikipedia\.org/);
-  await expect(page.locator('#sources a')).toHaveCount(3);
+  const finalConnectorDisplay = await items.last().locator('.timeline-rail').evaluate(
+    (rail) => getComputedStyle(rail, '::after').display,
+  );
+  expect(finalConnectorDisplay).toBe('none');
+
+  const sourceLinks = page.locator('#sources a');
+  await expect(sourceLinks).toHaveCount(3);
+  await expect(sourceLinks.nth(0)).toHaveAttribute(
+    'href',
+    'https://www.hbs.edu/about/campus-and-culture/campus-built-on-philanthropy/class-of-1959-chapel',
+  );
+  await expect(sourceLinks.nth(1)).toHaveAttribute(
+    'href',
+    'https://en.wikipedia.org/wiki/The_Class_of_1959_Chapel',
+  );
+  await expect(sourceLinks.nth(2)).toHaveAttribute(
+    'href',
+    'https://www.hbs.edu/news/stories/oleg-mashtaler',
+  );
 });

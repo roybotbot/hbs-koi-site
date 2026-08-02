@@ -11,7 +11,7 @@ const { items } = Astro.props;
 <div class="timeline" aria-label="Chapel pond chronology">
   {items.map((item) => (
     <article class="timeline-item flex gap-x-6" data-timeline-item>
-      <div class="timeline-rail relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:border-s">
+      <div class="timeline-rail relative after:absolute after:top-7 after:bottom-0 after:start-3.5 after:border-s">
         <div class="timeline-marker-shell relative z-10 size-7 flex items-center justify-center">
           <span class="timeline-marker size-2 rotate-45" aria-hidden="true"></span>
         </div>
@@ -37,6 +37,10 @@ const { items } = Astro.props;
 
   .timeline-rail::after {
     border-color: var(--line-paper);
+  }
+
+  .timeline-item:last-child .timeline-rail::after {
+    display: none;
   }
 
   .timeline-marker-shell {
