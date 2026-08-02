@@ -1,0 +1,86 @@
+---
+import type { HistoryEvent } from '../../data/history';
+
+interface Props {
+  items: HistoryEvent[];
+}
+
+const { items } = Astro.props;
+---
+
+<div class="timeline" aria-label="Chapel pond chronology">
+  {items.map((item) => (
+    <article class="timeline-item flex gap-x-6" data-timeline-item>
+      <div class="timeline-rail relative last:after:hidden after:absolute after:top-7 after:bottom-0 after:start-3.5 after:border-s">
+        <div class="timeline-marker-shell relative z-10 size-7 flex items-center justify-center">
+          <span class="timeline-marker size-2 rotate-45" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="timeline-entry grow pb-14">
+        <time>{item.date}</time>
+        <h2>{item.title}</h2>
+        <p>{item.body}</p>
+        <a href={item.sourceUrl} target="_blank" rel="noreferrer">{item.sourceLabel} <span aria-hidden="true">↗</span></a>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+  .timeline {
+    width: min(100%, 47rem);
+  }
+
+  .timeline-item {
+    gap: 1.5rem;
+  }
+
+  .timeline-rail::after {
+    border-color: var(--line-paper);
+  }
+
+  .timeline-marker-shell {
+    background: var(--paper);
+  }
+
+  .timeline-marker {
+    display: block;
+    background: var(--fern);
+  }
+
+  .timeline-entry {
+    padding-block-end: clamp(3rem, 6vw, 5.5rem);
+  }
+
+  time {
+    display: block;
+    margin-block: 0.2rem 0.75rem;
+    color: var(--concrete-700);
+    font-size: 0.7rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin-block-end: 1rem;
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    max-width: 37rem;
+    margin-block-end: 1.25rem;
+    color: var(--concrete-700);
+    line-height: 1.75;
+  }
+
+  a {
+    padding-block-end: 0.25rem;
+    border-block-end: 1px solid var(--koi);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+</style>

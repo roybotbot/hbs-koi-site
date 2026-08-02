@@ -1,0 +1,228 @@
+---
+import { Image } from 'astro:assets';
+import Timeline from '../components/history/Timeline.astro';
+import chapelLight from '../assets/chapel/chapel-light.jpg';
+import chapelPond from '../assets/chapel/chapel-pond.jpg';
+import { historyEvents } from '../data/history';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const hbsHistoryUrl =
+  'https://www.hbs.edu/about/campus-and-culture/campus-built-on-philanthropy/class-of-1959-chapel';
+const referenceArticleUrl = 'https://en.wikipedia.org/wiki/The_Class_of_1959_Chapel';
+const olegProfileUrl = 'https://www.hbs.edu/news/stories/oleg-mashtaler';
+---
+
+<BaseLayout
+  title="Pond history"
+  description="A sourced chronology of the Class of 1959 Chapel pond and the koi who live there."
+  theme="paper"
+>
+  <div class="history-page">
+    <header class="history-hero">
+      <Image
+        src={chapelPond}
+        alt="Water and dense plantings in the Class of 1959 Chapel pond"
+        widths={[768, 1280, 1920]}
+        sizes="100vw"
+        loading="eager"
+      />
+      <div class="history-hero__shade" aria-hidden="true"></div>
+      <div class="history-hero__copy">
+        <p class="eyebrow">Water garden chronology</p>
+        <h1>The pond in context</h1>
+        <p>A short, sourced record of the setting around the koi pond.</p>
+      </div>
+    </header>
+
+    <section class="history-chronology" aria-labelledby="chronology-title">
+      <div class="history-chronology__intro">
+        <p class="eyebrow">1959 — Present</p>
+        <h2 id="chronology-title">Five points in time</h2>
+        <p>The chapel's history establishes the setting. The koi and their care remain the focus.</p>
+      </div>
+      <Timeline items={historyEvents} />
+    </section>
+
+    <section class="history-setting" aria-labelledby="setting-title">
+      <div class="history-setting__image">
+        <Image
+          src={chapelLight}
+          alt="Daylight cast across the curved chapel interior"
+          widths={[480, 768, 1024]}
+          sizes="(max-width: 760px) 100vw, 50vw"
+        />
+      </div>
+      <div class="history-setting__copy">
+        <p class="eyebrow">The setting</p>
+        <h2 id="setting-title">Water before sanctuary</h2>
+        <p>Visitors pass through the enclosed water garden before entering the chapel's main sanctuary.</p>
+      </div>
+    </section>
+
+    <footer class="history-sources" id="sources" aria-labelledby="sources-title">
+      <h2 id="sources-title">Sources</h2>
+      <ul>
+        <li><a href={hbsHistoryUrl}>HBS: MBA Class of 1959 Chapel</a></li>
+        <li><a href={referenceArticleUrl}>Wikipedia: The Class of 1959 Chapel</a></li>
+        <li><a href={olegProfileUrl}>HBS News: Oleg Mashtaler</a></li>
+      </ul>
+    </footer>
+  </div>
+</BaseLayout>
+
+<style>
+  .history-hero {
+    position: relative;
+    display: grid;
+    min-height: min(80svh, 55rem);
+    overflow: hidden;
+    color: var(--paper);
+  }
+
+  .history-hero :global(img),
+  .history-hero__shade,
+  .history-hero__copy {
+    grid-area: 1 / 1;
+  }
+
+  .history-hero :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .history-hero__shade {
+    background: linear-gradient(90deg, rgb(24 48 38 / 88%), rgb(24 48 38 / 18%) 75%);
+  }
+
+  .history-hero__copy {
+    z-index: 1;
+    align-self: end;
+    padding: clamp(4rem, 10vw, 9rem) clamp(1.25rem, 7vw, 7rem);
+  }
+
+  .history-hero__copy .eyebrow {
+    color: color-mix(in srgb, var(--paper) 70%, transparent);
+  }
+
+  .history-hero__copy > p:last-child {
+    max-width: 30rem;
+    margin-block: 2rem 0;
+    font-size: clamp(1rem, 1.6vw, 1.25rem);
+    line-height: 1.7;
+  }
+
+  .history-chronology {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.65fr) minmax(20rem, 1fr);
+    gap: clamp(4rem, 10vw, 10rem);
+    padding: clamp(5rem, 10vw, 10rem) clamp(1.25rem, 8vw, 9rem);
+    background: var(--paper);
+    color: var(--concrete-900);
+  }
+
+  .history-chronology__intro {
+    position: sticky;
+    top: 3rem;
+    align-self: start;
+  }
+
+  .history-chronology__intro h2,
+  .history-setting h2 {
+    margin-block-end: 1.5rem;
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.05em;
+  }
+
+  .history-chronology__intro > p:last-child,
+  .history-setting__copy > p:last-child {
+    max-width: 32rem;
+    color: var(--concrete-700);
+    line-height: 1.75;
+  }
+
+  .history-setting {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(18rem, 0.9fr);
+    min-height: 36rem;
+    background: var(--concrete-900);
+    color: var(--paper);
+  }
+
+  .history-setting__image {
+    min-height: 28rem;
+  }
+
+  .history-setting__image :global(img) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .history-setting__copy {
+    align-self: center;
+    padding: clamp(4rem, 8vw, 8rem) clamp(1.25rem, 7vw, 7rem);
+  }
+
+  .history-setting__copy > p:last-child {
+    color: color-mix(in srgb, var(--paper) 76%, transparent);
+  }
+
+  .history-sources {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem clamp(2rem, 6vw, 6rem);
+    padding: 2rem clamp(1.25rem, 5vw, 5rem);
+    border-block-start: 1px solid var(--line-paper);
+    background: var(--paper);
+    color: var(--concrete-700);
+  }
+
+  .history-sources h2 {
+    margin: 0;
+    color: var(--concrete-900);
+    font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .history-sources ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.72rem;
+    line-height: 1.5;
+  }
+
+  .history-sources a {
+    text-underline-offset: 0.3em;
+  }
+
+  @media (max-width: 760px) {
+    .history-chronology,
+    .history-setting {
+      grid-template-columns: 1fr;
+    }
+
+    .history-chronology__intro {
+      position: static;
+    }
+
+    .history-sources {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<style is:global>
+  #main-content:has(.history-page) {
+    padding: 0;
+  }
+</style>
