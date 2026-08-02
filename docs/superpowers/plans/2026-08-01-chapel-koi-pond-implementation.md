@@ -138,9 +138,10 @@ Create `package.json`:
     "@axe-core/playwright": "4.12.1",
     "@playwright/test": "1.62.1",
     "@tailwindcss/vite": "4.3.3",
+    "@types/node": "26.1.2",
     "@types/three": "0.185.3",
     "tailwindcss": "4.3.3",
-    "typescript": "7.0.2",
+    "typescript": "6.0.3",
     "vitest": "4.1.10"
   }
 }
@@ -182,7 +183,7 @@ Create `tsconfig.json`:
 {
   "extends": "astro/tsconfigs/strict",
   "compilerOptions": {
-    "types": ["vitest/globals"]
+    "types": ["node", "vitest/globals"]
   }
 }
 ```
@@ -191,7 +192,7 @@ Create `src/styles/global.css`:
 
 ```css
 @import "tailwindcss";
-@import "preline/variants.css";
+@import "../../node_modules/preline/variants.css";
 @source "../../node_modules/preline/dist/*.js";
 
 :root {
