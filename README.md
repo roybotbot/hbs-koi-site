@@ -39,14 +39,20 @@ The Oleg Mashtaler engraving is a supplied project asset and is marked final.
 
 ## Deployment
 
-Cloudflare Pages settings:
+### GitHub Pages
+
+GitHub Pages deploys automatically after every successful push to `main`. In the repository's **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**. Do not select a branch or directory.
+
+The workflow in `.github/workflows/deploy-pages.yml` checks and tests the source, builds the project with the Pages base path, and uploads the generated `dist/` directory. Generated output is not committed to a `gh-pages` branch.
+
+Expected site URL: <https://roybotbot.github.io/chapel-koi-site/>
+
+### Cloudflare Pages alternative
 
 - Build command: `npm run build`
 - Output directory: `dist`
 - Node.js: 22.12 or newer
 - Environment variable: `SITE_URL` set to the deployed HTTPS origin, enabling canonical URLs
-
-No deployment is performed automatically by this repository.
 
 ## Attribution
 

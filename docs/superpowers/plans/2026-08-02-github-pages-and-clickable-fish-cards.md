@@ -245,8 +245,6 @@ jobs:
       - run: npm test
       - uses: actions/configure-pages@v5
         id: pages
-        with:
-          enablement: true
       - run: npm run build
         env:
           SITE_URL: ${{ steps.pages.outputs.origin }}
@@ -269,7 +267,7 @@ jobs:
 
 - [ ] **Step 4: Document deployment behavior**
 
-Update README to state that Pages source is **GitHub Actions**, pushes to `main` deploy automatically, generated output comes from `dist`, and the expected URL is `https://roybotbot.github.io/chapel-koi-site/`. Retain the existing Cloudflare instructions as an alternative.
+Update README to state that Pages source is **GitHub Actions**, pushes to `main` deploy automatically, generated output comes from `dist`, and the expected URL is `https://roybotbot.github.io/chapel-koi-site/`. Retain the existing Cloudflare instructions as an alternative. Do not set `enablement: true` on `actions/configure-pages`: the action requires a token other than `GITHUB_TOKEN` for enablement, so enable Pages once through repository settings or the API instead.
 
 - [ ] **Step 5: Verify the workflow contract and project build**
 

@@ -39,7 +39,7 @@ GitHub Pages stores a deployment artifact rather than generated files on a `gh-p
 
 A failed check, test, or build prevents deployment. GitHub retains the previous successful Pages deployment. The workflow uses deployment concurrency so a newer push supersedes an older in-progress deployment.
 
-If GitHub Pages is not enabled yet, the configure step requests enablement for GitHub Actions publishing.
+GitHub Pages publishing is enabled once in the repository settings or API with **Source** set to **GitHub Actions**; the workflow then configures each build without requiring an elevated token.
 
 ## Verification
 
