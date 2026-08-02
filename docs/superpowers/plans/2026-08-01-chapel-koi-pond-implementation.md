@@ -357,14 +357,14 @@ import { z } from 'astro/zod';
 
 const fish = defineCollection({
   loader: glob({ base: './src/content/fish', pattern: '**/*.md' }),
-  schema: z.object({
+  schema: ({ image }) => z.object({
     order: z.number().int().positive(),
     label: z.string(),
     markings: z.string(),
     variety: z.string().nullable(),
     age: z.string().nullable(),
     recordStatus: z.enum(['incomplete', 'verified']),
-    image: z.string(),
+    image: image(),
     imageAlt: z.string(),
     sourceUrl: z.string().url(),
     license: z.string(),
@@ -482,7 +482,7 @@ export const imageCredits: ImageCredit[] = [
   {
     asset: 'oleg-engraved.png',
     title: 'Oleg Mashtaler engraving',
-    creator: 'Roy Natian',
+    creator: 'Supplied project asset',
     sourceUrl: 'supplied locally',
     license: 'Project asset',
     replacementStatus: 'final',
