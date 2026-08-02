@@ -6,7 +6,7 @@
   :root {
     --concrete-900: #2c332f;
     --concrete-700: #59615c;
-    --concrete-500: #858a86;
+    --concrete-500: #9ba19d;
     --paper: #eeece5;
     --pond-900: #183026;
     --pond-700: #34483d;
@@ -123,6 +123,11 @@
 
   .site-location {
     color: var(--concrete-500);
+  }
+
+  [data-theme='paper'] .site-location,
+  [data-theme='paper'] .eyebrow {
+    color: var(--concrete-700);
   }
 
   .site-nav nav {

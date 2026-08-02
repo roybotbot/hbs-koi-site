@@ -1,4 +1,5 @@
 ---
+import { ClientRouter } from 'astro:transitions';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteNav from '../components/layout/SiteNav.astro';
 import '../styles/global.css';
@@ -22,13 +23,50 @@ const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url.origin)
     <meta name="description" content={description} />
     <link rel="canonical" href={canonicalUrl} />
     <title>{documentTitle}</title>
+    <ClientRouter />
   </head>
   <body data-theme={theme}>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <SiteNav />
-    <main id="main-content">
+    <main id="main-content" data-page-ready="false">
       <slot />
     </main>
     <SiteFooter />
+    <script>
+      let activeTween: { kill: () => void } | undefined;
+
+      async function revealPage() {
+        const main = document.querySelector<HTMLElement>('main');
+        if (!main) return;
+
+        activeTween?.kill();
+        main.dataset.pageReady = 'false';
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          main.style.removeProperty('opacity');
+          main.style.removeProperty('transform');
+          main.dataset.pageReady = 'true';
+          return;
+        }
+
+        const { gsap } = await import('gsap');
+        activeTween = gsap.fromTo(
+          main,
+          { opacity: 0, y: 6 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.32,
+            ease: 'power1.out',
+            clearProps: 'opacity,transform',
+            onComplete: () => {
+              main.dataset.pageReady = 'true';
+            },
+          },
+        );
+      }
+
+      document.addEventListener('astro:page-load', revealPage);
+      document.addEventListener('astro:before-swap', () => activeTween?.kill());
+    </script>
   </body>
 </html>
